@@ -1,0 +1,46 @@
+apply plugin: 'groovy'
+// apply global default properties for system level stuff
+//apply from: './gradle.properties'
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.2.1'
+}
+
+def pr = new NodePropReader()
+def panzura = pr.panzura
+
+task hello {
+    doLast {
+      def run = new Run()
+      println 'Hello from Gradle!'
+      run.command('python -u ./buildSrc/src/main/python/hello.py')
+    }
+  }
+
+task middle{
+  doLast{
+    println "\nWe are the middle...\n"
+  }
+}
+
+task hello_plus(dependsOn: ["hello", "middle"]){}
+
+task goodbye {
+    doLast{
+      println '\nGoodbye from Gradle!\n'
+    }
+}
+
+task all {
+  doFirst{
+    println "We are doing it all...\n\n"
+    println("panzura = $panzura")
+  }
+  doLast{
+    hello.execute()
+    middle.execute()
+  }
+  doLast{
+    goodbye.execute()
+  }
+}
